@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Float, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Text, Float
 from sqlalchemy.sql import func
 
 from app.database.connection import Base
@@ -15,19 +15,11 @@ class Product(Base):
 
     price = Column(Float, nullable=False)
 
-    image = Column(String(255), nullable=True)
+    quantity = Column(Integer, default=0)
 
-    category = Column(String(100), nullable=True)
-
-    stock = Column(Integer, default=0)
+    image_base64 = Column(Text, nullable=True)
 
     created_at = Column(
         DateTime,
         server_default=func.now()
-    )
-
-    updated_at = Column(
-        DateTime,
-        server_default=func.now(),
-        onupdate=func.now()
     )
