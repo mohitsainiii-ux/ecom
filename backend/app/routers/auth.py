@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.database.connection import get_db
+from app.database import get_db
 from app.models.user import User
 from app.schemas.user import UserRegister, UserLogin
 from app.services.security import hash_password, verify_password, create_access_token
@@ -103,3 +103,21 @@ def login(
         "role": user.role
     }
 }
+
+
+from fastapi import Depends
+from app.dependencies import require_admin
+
+
+@router.get("/admin-test")
+def admin_test(current_user=Depends(require_admin)):
+    return {
+        "success": True,
+        "message": "Admin access successful",
+        "user": {
+            "id": current_user.id,
+            "name": current_user.name,
+            "email": current_user.email,
+            "role": current_user.role
+        }
+    }

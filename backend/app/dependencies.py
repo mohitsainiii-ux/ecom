@@ -8,7 +8,7 @@ from app.services.security import decode_access_token
 
 
 # ==========================================
-# BEARER AUTHENTICATION
+# BEARER SECURITY
 # ==========================================
 
 security = HTTPBearer()
@@ -22,9 +22,10 @@ def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ):
+    # Get token from Authorization header
     token = credentials.credentials
 
-    # Decode JWT
+    # Decode token
     payload = decode_access_token(token)
 
     if not payload:
@@ -33,7 +34,7 @@ def get_current_user(
             detail="Invalid or expired token"
         )
 
-    # Get user ID from token
+    # Get user ID from JWT
     user_id = payload.get("sub")
 
     if not user_id:
@@ -54,3 +55,20 @@ def get_current_user(
         )
 
     return user
+
+
+# ==========================================
+# ADMIN AUTHORIZATION
+# ==========================================
+
+def require_admin(
+    current_user=Depends(get_current_user)
+):
+    # Check user role
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+
+    return current_user
