@@ -2,13 +2,16 @@ from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 
+from pydantic import BaseModel
+
+
 class ProductCreate(BaseModel):
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     price: float
-    image: Optional[str] = None
-    category: Optional[str] = None
-    stock: int = 0
+    quantity: int = 0
+    category: str | None = None
+    image_base64: str | None = None
 
 
 class ProductUpdate(BaseModel):
